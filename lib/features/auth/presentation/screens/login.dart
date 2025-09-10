@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
@@ -11,8 +8,11 @@ import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
+
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   InputDecoration _inputDecoration(String hint) {
@@ -30,37 +30,62 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void showSnack(String msg) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Center(
+            child: Text(
+              msg,
+              style: const TextStyle(
+                  color: AppColors.primaryOrange,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.black,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+    }
+
+    void showErrorSnack(String msg) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Center(
+          child: Text(
+            msg,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 3),
+      ));
+    }
+
     return BlocListener<AuthBlocBloc, AuthBlocState>(
       listener: (context, state) {
         if (state is ErrorAuth) {
           if (Navigator.canPop(context)) Navigator.pop(context);
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Center(
-              child: Text(
-                state.error,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            margin: const EdgeInsets.all(16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            duration: const Duration(seconds: 3),
-          ));
+          showErrorSnack("Login failed. Please try again");
         } else if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
         if (state is AuthBlocLoading) {
           showDialog(
               context: context,
-              builder: (context) => const CustomoLoadingIndicator(
-                    label: "Signing In",
-                  ));
-          log("hello");
+              builder: (context) => const CustomoLoadingIndicator());
         } else if (state is Authenticated) {
+          showSnack("Welcome back . You're now logged in!");
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
         }
       },
@@ -92,7 +117,7 @@ class Login extends StatelessWidget {
                         color: Colors.grey,
                       ),
                     ),
-                    const Gap(100),
+                    const Gap(80),
                     TextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -104,13 +129,9 @@ class Login extends StatelessWidget {
                         return null;
                       },
                       controller: emailController,
-                      textCapitalization: TextCapitalization.words,
+                      textCapitalization: TextCapitalization.none,
+                      textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.emailAddress,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r"[A-Za-z\s.'-]"),
-                        )
-                      ],
                       decoration: _inputDecoration("email"),
                     ),
                     const Gap(15),
@@ -125,13 +146,7 @@ class Login extends StatelessWidget {
                         return null;
                       },
                       controller: passwordController,
-                      obscureText: true, // Always hidden in stateless
-                      decoration: _inputDecoration("Password").copyWith(
-                        suffixIcon: const Icon(
-                          Icons.visibility_off,
-                          color: Colors.black,
-                        ),
-                      ),
+                      decoration: _inputDecoration("Password"),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -207,6 +222,13 @@ class Login extends StatelessWidget {
                     Center(
                       child: OutlinedButton(
                         onPressed: () {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) =>
+                                const CustomoLoadingIndicator(),
+                          );
+
                           context.read<AuthBlocBloc>().add(GoogleSignInEvent());
                         },
                         style: OutlinedButton.styleFrom(
@@ -215,9 +237,7 @@ class Login extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
+                              vertical: 10, horizontal: 10),
                         ),
                         child: Image.asset(
                           "assets/Google.jpeg",

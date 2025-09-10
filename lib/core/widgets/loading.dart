@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:mera_app/core/theme/app_color.dart';
 
 class CustomoLoadingIndicator extends StatelessWidget {
-  const CustomoLoadingIndicator({super.key, this.label});
+  const CustomoLoadingIndicator({
+    super.key,
+    this.label,
+    this.isSplash = false,
+  });
+
   final String? label;
+  final bool isSplash;
 
   @override
   Widget build(BuildContext context) {
@@ -13,23 +21,18 @@ class CustomoLoadingIndicator extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                strokeWidth: 4.0,
-              ),
-              if (label != null) ...[
-                const SizedBox(height: 16),
-                Text(
-                  label!,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500),
-                )
-              ]
+              isSplash
+                  ? LoadingAnimationWidget.fourRotatingDots(
+                      color: AppColors.primaryOrange,
+                      size: 40,
+                    )
+                  : LoadingAnimationWidget.hexagonDots(
+                      color: AppColors.primaryOrange,
+                      size: 40,
+                    ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

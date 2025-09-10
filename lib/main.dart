@@ -6,10 +6,11 @@ import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
 import 'package:mera_app/features/auth/presentation/screens/login.dart';
 import 'package:mera_app/features/auth/presentation/screens/reset_password.dart';
 import 'package:mera_app/features/auth/presentation/screens/sign_up.dart';
+import 'package:mera_app/features/bottom_nav/screens/main_navigation.dart';
 import 'package:mera_app/features/home/screens/home_screen.dart';
 import 'package:mera_app/features/onboarding/screens/intro_screen.dart';
 import 'package:mera_app/features/onboarding/screens/splash_screen.dart';
-import 'package:mera_app/firebase_options.dart';
+import 'package:mera_app/core/constant/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
             AppRoutes.onboarding: (context) => OnboardingScreens(),
             AppRoutes.login: (context) => Login(),
             AppRoutes.signUp: (context) => SignUp(),
-            AppRoutes.home: (context) => HomeScreen(),
+            AppRoutes.home: (context) => BottomNavBar(),
             AppRoutes.resetPassword: (context) => ResetPassword(),
           },
         ));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
@@ -20,72 +21,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController conformPassword = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String? selectedValue;
-  String? selectedcode = "91";
-  final List<String> countryCodes = [
-    '+1', // United States/Canada
-    '+7', // Russia
-    '+20', // Egypt
-    '+27', // South Africa
-    '+30', // Greece
-    '+31', // Netherlands
-    '+32', // Belgium
-    '+33', // France
-    '+34', // Spain
-    '+36', // Hungary
-    '+39', // Italy
-    '+40', // Romania
-    '+41', // Switzerland
-    '+43', // Austria
-    '+44', // United Kingdom
-    '+45', // Denmark
-    '+46', // Sweden
-    '+47', // Norway
-    '+48', // Poland
-    '+49', // Germany
-    '+51', // Peru
-    '+52', // Mexico
-    '+53', // Cuba
-    '+54', // Argentina
-    '+55', // Brazil
-    '+56', // Chile
-    '+57', // Colombia
-    '+58', // Venezuela
-    '+60', // Malaysia
-    '+61', // Australia
-    '+62', // Indonesia
-    '+63', // Philippines
-    '+64', // New Zealand
-    '+65', // Singapore
-    '+66', // Thailand
-    '+81', // Japan
-    '+82', // South Korea
-    '+84', // Vietnam
-    '+86', // China
-    '+90', // Turkey
-    '+91', // India
-    '+92', // Pakistan
-    '+93', // Afghanistan
-    '+94', // Sri Lanka
-    '+95', // Myanmar
-    '+98', // Iran
-    '+211', // South Sudan
-    '+212', // Morocco
-    '+213', // Algeria
-    '+216', // Tunisia
-    '+218', // Libya
-    '+234', // Nigeria
-    '+255', // Tanzania
-    '+260', // Zambia
-    '+263', // Zimbabwe
-    '+971', // UAE
-    '+972', // Israel
-    '+973', // Bahrain
-    '+974', // Qatar
-    '+975', // Bhutan
-    '+976', // Mongolia
-    '+977', // Nepal
-  ];
+
   void _showSnack(String msg) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -110,17 +46,40 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-        filled: true,
-        fillColor: Colors.grey[200],
-        hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
+  void showErrorSnack(String msg) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Center(
+        child: Text(
+          msg,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+          textAlign: TextAlign.center,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 14));
+      ),
+      backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      duration: const Duration(seconds: 3),
+    ));
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      filled: true,
+      fillColor: Colors.grey[200],
+      labelText: label,
+      labelStyle: const TextStyle(
+        color: Colors.grey, // initial label color
+        fontSize: 16, // label font size
+        fontWeight: FontWeight.w400,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+    );
   }
 
   @override
@@ -129,12 +88,13 @@ class _SignUpState extends State<SignUp> {
       listener: (context, state) {
         if (state is ErrorAuth) {
           if (Navigator.canPop(context)) Navigator.pop(context);
-          _showSnack(state.error);
+          showErrorSnack("Signin failed.");
         } else if (state is AuthBlocLoading) {
-          const CustomoLoadingIndicator(
-            label: "Registering User.......",
-          );
+          showDialog(
+              context: context,
+              builder: (context) => const CustomoLoadingIndicator());
         } else if (state is Authenticated) {
+          _showSnack("Welcome back! You’re now signed in ✅");
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
         }
       },
@@ -168,15 +128,15 @@ class _SignUpState extends State<SignUp> {
                     ),
                     const Gap(30),
                     TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
                       controller: nameController,
                       keyboardType: TextInputType.name,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       textInputAction: TextInputAction.next,
                       decoration: _inputDecoration("Name"),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Name is required";
-                          }
+                          return "Name is required";
                         }
                         return null;
                       },
@@ -185,6 +145,8 @@ class _SignUpState extends State<SignUp> {
                     TextFormField(
                       controller: emailController,
                       textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: _inputDecoration("Email"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -197,38 +159,28 @@ class _SignUpState extends State<SignUp> {
                       },
                     ),
                     const Gap(15),
-                    Row(children: [
-                      DropdownButton<String>(
-                        items: countryCodes.map((code) {
-                          return DropdownMenuItem(
-                              value: code, child: Text(code));
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedcode = selectedValue;
-                          });
-                        },
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return "Phone number is required";
-                              } else if (!RegExp(r'^[0-9]{10}$')
-                                  .hasMatch(value)) {
-                                return "Enter a valid 10-digit phone number";
-                              }
-                              return null;
-                            },
-                            controller: phoneController,
-                            keyboardType: TextInputType.phone,
-                            maxLength: 10,
-                            decoration: _inputDecoration("Mobile no")),
-                      ),
-                    ]),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Phone number is required";
+                        } else if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                          return "Enter a valid 10-digit phone number";
+                        }
+                        return null;
+                      },
+                      controller: phoneController,
+                      textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      keyboardType: TextInputType.phone,
+                      maxLength: 10,
+                      decoration: _inputDecoration("Mobile Number"),
+                    ),
                     const Gap(15),
                     TextFormField(
                       controller: passwordController,
+                      textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: true,
                       decoration: _inputDecoration("Password"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -240,6 +192,9 @@ class _SignUpState extends State<SignUp> {
                     const Gap(15),
                     TextFormField(
                       controller: conformPassword,
+                      textInputAction: TextInputAction.next,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: true,
                       decoration: _inputDecoration('Confirm Password'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -305,6 +260,10 @@ class _SignUpState extends State<SignUp> {
                     Center(
                       child: OutlinedButton(
                         onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  const CustomoLoadingIndicator());
                           context.read<AuthBlocBloc>().add(GoogleSignInEvent());
                         },
                         style: OutlinedButton.styleFrom(
