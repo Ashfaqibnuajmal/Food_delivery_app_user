@@ -11,13 +11,41 @@ class ForgotPassword extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void showSnack(String msg) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Center(
+            child: Text(
+              msg,
+              style: const TextStyle(
+                  color: AppColors.primaryOrange,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          backgroundColor: Colors.black,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+    }
+
     TextEditingController emailController = TextEditingController();
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           leading: IconButton(
-              onPressed: () {}, icon: const Icon(Icons.arrow_back_ios)),
+              onPressed: () {
+                Navigator.canPop(context);
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back_ios)),
         ),
         body: SingleChildScrollView(
             child: SafeArea(
@@ -74,15 +102,7 @@ class ForgotPassword extends StatelessWidget {
                     if (_formState.currentState!.validate()) {
                       try {
                         authService.passWordReset(emailController.text.trim());
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text("Verification link sent to your Mail"),
-                            backgroundColor: Colors.green,
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 3),
-                          ),
-                        );
+                        showSnack("Varification link send to your email.");
                       } on FirebaseAuthException catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

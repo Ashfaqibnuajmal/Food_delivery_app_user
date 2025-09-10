@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
 import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
+import 'package:mera_app/features/auth/presentation/screens/forgot_password.dart';
 import 'package:mera_app/features/auth/presentation/screens/login.dart';
 import 'package:mera_app/features/auth/presentation/screens/reset_password.dart';
 import 'package:mera_app/features/auth/presentation/screens/sign_up.dart';
@@ -37,12 +38,12 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: AppRoutes.splash,
           routes: {
-            AppRoutes.splash: (context) => SplashScreen(),
-            AppRoutes.onboarding: (context) => OnboardingScreens(),
+            AppRoutes.splash: (context) => const SplashScreen(),
+            AppRoutes.onboarding: (context) => const OnboardingScreens(),
             AppRoutes.login: (context) => Login(),
-            AppRoutes.signUp: (context) => SignUp(),
-            AppRoutes.home: (context) => BottomNavBar(),
-            AppRoutes.resetPassword: (context) => ResetPassword(),
+            AppRoutes.signUp: (context) => const SignUp(),
+            AppRoutes.home: (context) => const BottomNavBar(),
+            AppRoutes.forgotPassword: (context) => ForgotPassword(),
           },
         ));
   }

@@ -154,7 +154,7 @@ class Login extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.pushNamed(
-                                context, AppRoutes.resetPassword);
+                                context, AppRoutes.forgotPassword);
                           },
                           child: const Text(
                             "Forgot Password?",
