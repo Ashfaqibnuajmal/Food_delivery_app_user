@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/theme/text_style.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingFooter extends StatefulWidget {
@@ -63,21 +64,17 @@ class _OnboardingFooterState extends State<OnboardingFooter> {
             children: [
               if (currentPage < 2)
                 TextButton(
-                  onPressed: () {
-                    widget.controller.animateToPage(
-                      2,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  child: const Text(
-                    "Skip",
-                    style: TextStyle(
-                      color: AppColors.primaryOrange,
-                      fontSize: 16,
-                    ),
-                  ),
-                )
+                    onPressed: () {
+                      widget.controller.animateToPage(
+                        2,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                    child: const Text(
+                      "Skip",
+                      style: orangeTextStyle,
+                    ))
               else
                 const SizedBox(width: 60), // To keep layout aligned
 
@@ -119,11 +116,7 @@ class _OnboardingFooterState extends State<OnboardingFooter> {
                       ? const Row(children: [
                           Text(
                             "Get Started!",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryOrange,
-                            ),
+                            style: orangeBoldTextStyle,
                           ),
                           Icon(
                             Icons.arrow_forward_ios,

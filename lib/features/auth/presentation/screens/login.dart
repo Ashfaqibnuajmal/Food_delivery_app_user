@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
-import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/theme/text_style.dart';
+import 'package:mera_app/core/widgets/error_snackbar.dart';
 import 'package:mera_app/core/widgets/loading.dart';
+import 'package:mera_app/core/widgets/show_snack.dart';
+import 'package:mera_app/core/widgets/text_link.dart';
 import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
+import 'package:mera_app/features/auth/presentation/widgets/button.dart';
+import 'package:mera_app/features/auth/presentation/widgets/divider_text.dart';
+import 'package:mera_app/features/auth/presentation/widgets/email.dart';
+import 'package:mera_app/features/auth/presentation/widgets/google_button.dart';
+import 'package:mera_app/features/auth/presentation/widgets/password_text_field.dart';
+import 'package:mera_app/features/auth/presentation/widgets/auth_redirect_text.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -15,77 +24,22 @@ class Login extends StatelessWidget {
 
   final _formKey = GlobalKey<FormState>();
 
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.grey[200],
-      hintText: hint,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    void showSnack(String msg) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Center(
-            child: Text(
-              msg,
-              style: const TextStyle(
-                  color: AppColors.primaryOrange,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          backgroundColor: Colors.black,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
-    }
-
-    void showErrorSnack(String msg) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Center(
-          child: Text(
-            msg,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        duration: const Duration(seconds: 3),
-      ));
-    }
-
     return BlocListener<AuthBlocBloc, AuthBlocState>(
       listener: (context, state) {
         if (state is ErrorAuth) {
           if (Navigator.canPop(context)) Navigator.pop(context);
-          showErrorSnack("Login failed. Please try again");
+          ShowErrorSnackBar.showError(
+              context, "Login failed. Please try again");
         } else if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
         if (state is AuthBlocLoading) {
           showDialog(
-              context: context,
-              builder: (context) => const CustomoLoadingIndicator());
+              context: context, builder: (context) => const LoadingIndicator());
         } else if (state is Authenticated) {
-          showSnack("Welcome back . You're now logged in!");
+          ShowSnackBar.show(context, "Welcome back . You're now logged in!");
           Navigator.of(context).pushReplacementNamed(AppRoutes.home);
         }
       },
@@ -102,169 +56,60 @@ class Login extends StatelessWidget {
                   children: [
                     const Gap(40),
                     const Text(
-                      'Log in',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                      'Login',
+                      style: blackBoldBigTextStyle,
                     ),
                     const Gap(10),
                     const Text(
-                      'Welcome back to your account.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      'Add details for login.',
+                      style: lightBlackTextStyle,
                     ),
                     const Gap(80),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Email cannot be empty";
-                        }
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                          return "Enter a valid email";
-                        }
-                        return null;
-                      },
-                      controller: emailController,
-                      textCapitalization: TextCapitalization.none,
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: _inputDecoration("email"),
-                    ),
+                    EmailField(controller: emailController),
                     const Gap(15),
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password cannot be empty";
-                        }
-                        if (value.length < 6) {
-                          return "Password must be at least 6 characters";
-                        }
-                        return null;
+                    PasswordField(controller: passwordController),
+                    TextLink(
+                      text: "Forgot Password?",
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.forgotPassword);
                       },
-                      controller: passwordController,
-                      decoration: _inputDecoration("Password"),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, AppRoutes.forgotPassword);
-                          },
-                          child: const Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                     const Gap(35),
                     Center(
-                      child: ElevatedButton(
+                      child: PrimaryButton(
+                        text: "Log In",
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             context.read<AuthBlocBloc>().add(LoginEvent(
-                                email: emailController.text,
-                                password: passwordController.text));
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ));
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryOrange,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 80,
-                          ),
-                        ),
-                        child: const Text(
-                          'Log In',
-                          style: TextStyle(fontSize: 18),
-                        ),
                       ),
                     ),
                     const Gap(50),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'Or Sign With',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
+                    const DividerWithText(text: 'Or Sign With'),
                     const Gap(20),
                     Center(
-                      child: OutlinedButton(
+                      child: GoogleButton(
                         onPressed: () {
                           showDialog(
                             context: context,
                             barrierDismissible: false,
-                            builder: (context) =>
-                                const CustomoLoadingIndicator(),
+                            builder: (context) => const LoadingIndicator(),
                           );
-
                           context.read<AuthBlocBloc>().add(GoogleSignInEvent());
                         },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.grey),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                        ),
-                        child: Image.asset(
-                          "assets/Google.jpeg",
-                          height: 24,
-                        ),
                       ),
                     ),
                     const Gap(20),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Already have an account?',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed(AppRoutes.signUp);
-                            },
-                            child: const Text(
-                              "Sign Up",
-                              style: TextStyle(color: AppColors.primaryOrange),
-                            ),
-                          ),
-                        ],
-                      ),
+                    isUserSignin(
+                      questionText: "Already have an account?",
+                      actionText: "Sign Up",
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(AppRoutes.signUp);
+                      },
                     ),
                   ],
                 ),

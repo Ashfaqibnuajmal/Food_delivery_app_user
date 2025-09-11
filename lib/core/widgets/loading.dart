@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 
-class CustomoLoadingIndicator extends StatelessWidget {
-  const CustomoLoadingIndicator({
+class LoadingIndicator extends StatelessWidget {
+  const LoadingIndicator({
     super.key,
     this.label,
     this.isSplash = false,

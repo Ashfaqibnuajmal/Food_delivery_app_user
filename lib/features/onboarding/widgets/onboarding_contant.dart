@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/theme/text_style.dart';
 
 class OnboardingContent extends StatelessWidget {
   final String imagePath;
@@ -57,20 +58,13 @@ class OnboardingContent extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+                style: blackBoldBigTextStyle,
                 textAlign: TextAlign.center,
               ),
               const Gap(16),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
+                style: lightBlackTextStyle,
                 textAlign: TextAlign.center,
               ),
             ],

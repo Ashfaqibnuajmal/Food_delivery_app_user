@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mera_app/features/auth/presentation/screens/sign_up.dart';
+import 'package:mera_app/core/routes/app_routes.dart';
 import 'package:mera_app/features/onboarding/widgets/onboarding_contant.dart';
 import 'package:mera_app/features/onboarding/widgets/onboarding_footer.dart';
 
@@ -56,10 +56,7 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
           OnboardingFooter(
             controller: _controller,
             onDone: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const SignUp()),
-              );
+              Navigator.pushReplacementNamed(context, AppRoutes.signUp);
             },
           ),
         ],
