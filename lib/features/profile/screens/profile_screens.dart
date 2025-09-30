@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
-import 'package:mera_app/features/auth/presentation/screens/login.dart';
 import 'package:mera_app/features/profile/screens/chat/chat_and_support.dart';
 import 'package:mera_app/features/profile/screens/order/order_history.dart';
 import 'package:mera_app/features/profile/screens/settings/settings.dart';
