@@ -42,6 +42,7 @@ class AuthService {
     } catch (e) {
       log(e.toString());
     }
+    return null;
   }
 
   void signOut() async {
@@ -67,9 +68,9 @@ class AuthService {
         throw "Google sign in aborted by the user";
       }
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final Gcred = GoogleAuthProvider.credential(
+      final gcred = GoogleAuthProvider.credential(
           idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-      await auth.signInWithCredential(Gcred);
+      await auth.signInWithCredential(gcred);
       return auth.currentUser!.uid;
     } on FirebaseAuthException catch (e) {
       log("google sign in error${e.toString()}");

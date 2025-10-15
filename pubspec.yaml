@@ -24,6 +24,7 @@ dependencies:
   loading_animation_widget: ^1.3.0
   equatable: ^2.0.7
   google_generative_ai: ^0.4.7
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:
