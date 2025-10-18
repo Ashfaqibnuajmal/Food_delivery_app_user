@@ -1,0 +1,198 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/widgets/loading.dart';
+
+class FoodItemsList extends StatelessWidget {
+  const FoodItemsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection("FoodItems").snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: LoadingIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(
+            child: Text(
+              "No Food Items Found",
+              style: TextStyle(fontSize: 16),
+            ),
+          );
+        }
+
+        final foodItems = snapshot.data!.docs;
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: foodItems.length,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          itemBuilder: (context, index) {
+            final food = foodItems[index].data()! as Map<String, dynamic>;
+            final bool isBestSeller = food["isBestSeller"] == true;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Stack(
+                children: [
+                  // Main Container
+                  Container(
+                    height: 124,
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: AppColors.primaryOrange.withOpacity(0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryOrange.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(1, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Image Section
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            food["imageUrl"] ?? "",
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.image_not_supported),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+
+                        // Details Column
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      food["name"] ?? "",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.favorite,
+                                    color: AppColors.primaryOrange,
+                                    size: 30,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  const Icon(Icons.timer_outlined,
+                                      size: 15, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    "${food["prepTimeMinutes"]} min",
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              const Row(
+                                children: [
+                                  Icon(Icons.star,
+                                      size: 15, color: AppColors.primaryOrange),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "4.5",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    " ₹ ${food["price"]}.00",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryOrange,
+                                      borderRadius: BorderRadius.circular(50),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black26,
+                                          blurRadius: 2,
+                                          offset: Offset(1, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Row(
+                                      children: [
+                                        Text(
+                                          "Add",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.add_circle_rounded,
+                                            color: Colors.black),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isBestSeller)
+                    Positioned(
+                      top: -10,
+                      left: 4,
+                      child: Image.asset(
+                        "assets/best-seller.png",
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
