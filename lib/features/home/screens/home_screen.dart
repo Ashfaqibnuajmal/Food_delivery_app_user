@@ -651,165 +651,162 @@ class _HomePageState extends State<HomeScreen> {
             Column(
               children: List.generate(3, (index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Container(
-                    height: 120,
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                          color: AppColors.primaryOrange.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryOrange.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(1, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Stack(
                       children: [
-                        // 🟠 Left Section – Tag + Image
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryOrange,
-                                borderRadius: BorderRadius.circular(50),
+                        // 🟢 Your existing container
+                        Container(
+                          height: 120,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color:
+                                    AppColors.primaryOrange.withOpacity(0.3)),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryOrange.withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: const Offset(1, 2),
                               ),
-                              child: const Text(
-                                "Bestseller",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Image.asset(
-                              "assets/intro_image1.jpeg",
-                              height: 70,
-                              width: 70,
-                              fit: BoxFit.cover,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 12),
-
-                        // 🟠 Right Section – Details
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            ],
+                          ),
+                          child: Row(
                             children: [
-                              // Title + Favorite
-                              const Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              // 🟠 Left Section – Tag + Image
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    "Chicken Biriyani",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.favorite,
-                                    color: AppColors.primaryOrange,
-                                    size: 25,
+                                  const SizedBox(
+                                      height: 26), // space for top image
+                                  Image.asset(
+                                    "assets/intro_image1.jpeg",
+                                    height: 70,
+                                    width: 70,
+                                    fit: BoxFit.cover,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(width: 12),
 
-                              // Time
-                              const Row(
-                                children: [
-                                  Icon(Icons.timer_outlined,
-                                      size: 15, color: Colors.grey),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "15 min",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 2),
-
-                              // Rating
-                              const Row(
-                                children: [
-                                  Icon(Icons.star,
-                                      size: 15, color: AppColors.primaryOrange),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    "4.5",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-
-                              // 💰 Price + Add button
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "₹ 120.00",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryOrange,
-                                      borderRadius: BorderRadius.circular(50),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.black26,
-                                          blurRadius: 2,
-                                          offset: Offset(1, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Row(
+                              // 🟠 Right Section – Details
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          "Add",
+                                          "Chicken Biriyani",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                        SizedBox(width: 4),
-                                        Icon(Icons.add_circle_rounded,
-                                            color: Colors.black),
+                                        Icon(
+                                          Icons.favorite,
+                                          color: AppColors.primaryOrange,
+                                          size: 25,
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 4),
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.timer_outlined,
+                                            size: 15, color: Colors.grey),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "15 min",
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.star,
+                                            size: 15,
+                                            color: AppColors.primaryOrange),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "4.5",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "₹ 120.00",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryOrange,
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 2,
+                                                offset: Offset(1, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: const Row(
+                                            children: [
+                                              Text(
+                                                "Add",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                              SizedBox(width: 4),
+                                              Icon(Icons.add_circle_rounded,
+                                                  color: Colors.black),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
+
+                        // 🟣 Top-left “Best Seller” badge
+                        Positioned(
+                          top: -10,
+                          left: 4,
+                          child: Image.asset(
+                            "assets/best-seller.png",
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ],
-                    ),
-                  ),
-                );
+                    ));
               }),
             ),
           ],
