@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
 import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/widgets/loading.dart';
 import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
 import 'package:mera_app/features/profile/screens/chat/chat_and_support.dart';
 import 'package:mera_app/features/profile/screens/order/order_history.dart';
-import 'package:mera_app/features/profile/screens/settings/settings.dart';
+import 'package:mera_app/features/profile/widgets/settings.dart';
 
 class ProfileScreens extends StatefulWidget {
   const ProfileScreens({super.key});
@@ -66,341 +68,363 @@ class _ProfileScreensState extends State<ProfileScreens> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            // Profile Image Placeholder
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey[300],
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+        child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection("Users").snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                const Center(
+                  child: LoadingIndicator(),
+                );
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text("No user data found"));
+              }
+
+              final userData =
+                  snapshot.data!.docs.first.data() as Map<String, dynamic>;
+              final name = userData['name'] ?? "";
+              final email = userData['email'] ?? "";
+              final phone = userData['phone'] ?? '';
+              return Column(
                 children: [
-                  Icon(
-                    Icons.camera_alt,
-                    size: 30,
-                    color: Colors.grey[700],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Name
-            const Text(
-              'Ashfaq',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'ashfakv21-@gmail.com',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const Text(
-              '9846100721',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 10),
-
-            // Edit Profile Button
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              ),
-              child: const Text(
-                "Edit Profile",
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: 15),
-
-            // Divider with shadow
-            Container(
-              height: 1,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 15),
-
-            // Options directly as Cards
-            Card(
-              color: Colors.white,
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const OrderHistory()));
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.receipt_long, color: Colors.black),
-                  title: Text(
-                    "Order history",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-              ),
-            ),
-            Card(
-              color: Colors.white,
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ChatAndSupport()));
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.call, color: Colors.black),
-                  title: Text(
-                    "Chat with us",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-              ),
-            ),
-            Card(
-              color: Colors.white,
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Settings()));
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.settings, color: Colors.black),
-                  title: Text(
-                    "Settings",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-              ),
-            ),
-            Card(
-              color: Colors.white,
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () {
-                  showThemeBottomSheet(context);
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.brightness_6, color: Colors.black),
-                  title: Text(
-                    "Theme",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                ),
-              ),
-            ),
-            Card(
-              color: Colors.white,
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  // Profile Image Placeholder
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey[300],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 3),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Question mark icon in red circle
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFE53E3E),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.question_mark,
-                                  color: Colors.white,
-                                  size: 28,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          size: 30,
+                          color: Colors.grey[700],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
-                              // Title
-                              const Text(
-                                'Logout',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
+                  // Name
+                  Text(
+                    name,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    email,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  Text(
+                    phone,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 10),
 
-                              // Message
-                              const Text(
-                                'Are you sure you want to Logout?',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 24),
+                  // Edit Profile Button
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 12),
+                    ),
+                    child: const Text(
+                      "Edit Profile",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
 
-                              // Buttons
-                              Row(
-                                children: [
-                                  // NO button
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      style: TextButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFFE5E5E5),
-                                        foregroundColor: Colors.black87,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'NO',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
+                  // Divider with shadow
+                  Container(
+                    height: 1,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
 
-                                  // YES button
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        context
-                                            .read<AuthBlocBloc>()
-                                            .add(LogoutEvent());
-                                        _showSnack(
-                                            "You have been logged out seccessfully");
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            AppRoutes.login,
-                                            (Route<dynamic> route) => false);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFFE53E3E),
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      child: const Text(
-                                        'YES',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                  // Options directly as Cards
+                  Card(
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OrderHistory()));
+                      },
+                      child: const ListTile(
+                        leading: Icon(Icons.receipt_long, color: Colors.black),
+                        title: Text(
+                          "Order history",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      );
-                    },
-                  );
-                },
-                child: const ListTile(
-                  leading: Icon(Icons.logout, color: Colors.black),
-                  title: Text(
-                    "Logout",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            )
-          ],
-        ),
+                  Card(
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ChatAndSupport()));
+                      },
+                      child: const ListTile(
+                        leading: Icon(Icons.call, color: Colors.black),
+                        title: Text(
+                          "Chat with us",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SettingsPage()));
+                      },
+                      child: const ListTile(
+                        leading: Icon(Icons.settings, color: Colors.black),
+                        title: Text(
+                          "Settings",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () {
+                        showThemeBottomSheet(context);
+                      },
+                      child: const ListTile(
+                        leading: Icon(Icons.brightness_6, color: Colors.black),
+                        title: Text(
+                          "Theme",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    color: Colors.white,
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Question mark icon in red circle
+                                    Container(
+                                      width: 56,
+                                      height: 56,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFE53E3E),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.question_mark,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+
+                                    // Title
+                                    const Text(
+                                      'Logout',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    // Message
+                                    const Text(
+                                      'Are you sure you want to Logout?',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black87,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 24),
+
+                                    // Buttons
+                                    Row(
+                                      children: [
+                                        // NO button
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: TextButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFFE5E5E5),
+                                              foregroundColor: Colors.black87,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              'NO',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+
+                                        // YES button
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<AuthBlocBloc>()
+                                                  .add(LogoutEvent());
+                                              _showSnack(
+                                                  "You have been logged out seccessfully");
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  AppRoutes.login,
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color(0xFFE53E3E),
+                                              foregroundColor: Colors.white,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              elevation: 0,
+                                            ),
+                                            child: const Text(
+                                              'YES',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: const ListTile(
+                        leading: Icon(Icons.logout, color: Colors.black),
+                        title: Text(
+                          "Logout",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            }),
       ),
     );
   }

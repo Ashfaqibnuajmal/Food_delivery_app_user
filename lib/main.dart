@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mera_app/core/blocs/search_bloc.dart';
-import 'package:mera_app/core/blocs/search_event.dart';
+import 'package:mera_app/core/blocs/favorite/favorite_bloc.dart';
+import 'package:mera_app/core/blocs/search/search_bloc.dart';
+import 'package:mera_app/core/blocs/search/search_event.dart';
 import 'package:mera_app/core/routes/app_routes.dart';
 import 'package:mera_app/features/auth/bloc/auth_bloc_bloc.dart';
 import 'package:mera_app/features/auth/presentation/screens/forgot_password.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => FoodSearchBloc()..add(const SetFoodItems([])),
           ),
+          BlocProvider(create: (context) => FavoriteBloc()),
           BlocProvider(create: (context) => AuthBlocBloc()),
           BlocProvider(create: (context) => AiChatBloc())
         ],

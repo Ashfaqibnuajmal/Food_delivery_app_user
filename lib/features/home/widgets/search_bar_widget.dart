@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/features/home/screens/search_screen.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -23,7 +24,7 @@ class SearchBarWidget extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: Colors.black.withOpacity(0.2),
+                color: AppColors.primaryOrange.withOpacity(0.2),
               ),
               boxShadow: [
                 BoxShadow(
@@ -34,29 +35,15 @@ class SearchBarWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
+            child: const Row(
               children: [
-                const SizedBox(width: 12),
-                const Icon(Icons.search, color: Colors.black54),
-                const SizedBox(width: 8),
-                const Expanded(
+                SizedBox(width: 12),
+                Icon(Icons.search, color: Colors.black54),
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     "Search....",
                     style: TextStyle(color: Colors.black54, fontSize: 16),
-                  ),
-                ),
-                Container(
-                  height: 36,
-                  width: 36,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFFE0B2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.mic,
-                    color: Colors.deepOrange,
-                    size: 22,
                   ),
                 ),
               ],

@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mera_app/core/blocs/search_bloc.dart';
-import 'package:mera_app/core/blocs/search_event.dart';
-import 'package:mera_app/core/blocs/search_state.dart';
+import 'package:mera_app/core/blocs/favorite/favorite_bloc.dart';
+import 'package:mera_app/core/blocs/favorite/favorite_event.dart';
+import 'package:mera_app/core/blocs/favorite/favorite_state.dart';
+import 'package:mera_app/core/blocs/search/search_bloc.dart';
+import 'package:mera_app/core/blocs/search/search_event.dart';
+import 'package:mera_app/core/blocs/search/search_state.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
 import 'package:mera_app/features/home/screens/food_details.dart';
@@ -84,7 +87,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.black.withOpacity(0.2)),
+                  border: Border.all(
+                    color: AppColors.primaryOrange.withOpacity(0.2),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -252,9 +257,23 @@ class _SearchScreenState extends State<SearchScreen> {
 
                         if (filteredItems.isEmpty) {
                           return const Center(
-                            child: Text(
-                              "No Food Items Found",
-                              style: TextStyle(fontSize: 16),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 100),
+                                Icon(
+                                  Icons.search_off_rounded,
+                                  size: 50,
+                                  color: AppColors.primaryOrange,
+                                ),
+                                Text(
+                                  "No Food Items Found!",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      letterSpacing: -1,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
                           );
                         }
@@ -283,145 +302,199 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 );
                               },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: Colors.black.withOpacity(0.2)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 3,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.star,
-                                                  color:
-                                                      AppColors.primaryOrange,
-                                                  size: 18),
-                                              SizedBox(width: 4),
-                                              Text("4.5",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
-                                          Icon(Icons.favorite,
-                                              color: AppColors.primaryOrange,
-                                              size: 26),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Center(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Image.network(
-                                            food["imageUrl"] ?? "",
-                                            height: 100,
-                                            width: 100,
-                                            fit: BoxFit.cover,
-                                            errorBuilder: (context, error,
-                                                    stackTrace) =>
-                                                const Icon(
-                                                    Icons.image_not_supported),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        food["name"] ?? "",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const Spacer(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "₹${food["price"]}.00",
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: const Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        'Food item successfully added',
-                                                        style: TextStyle(
-                                                            color: AppColors
-                                                                .primaryOrange,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      Icon(
-                                                        Icons
-                                                            .check_circle_outline,
-                                                        color: AppColors
-                                                            .primaryOrange,
-                                                      )
-                                                    ],
-                                                  ),
-                                                  backgroundColor: Colors.white,
-                                                  behavior:
-                                                      SnackBarBehavior.floating,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
-                                                  duration: const Duration(
-                                                      seconds: 2),
-                                                ),
-                                              );
-                                            },
-                                            child: Container(
-                                              height: 35,
-                                              width: 35,
-                                              decoration: const BoxDecoration(
-                                                color: AppColors.primaryOrange,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(Icons.add,
-                                                  color: Colors.white,
-                                                  size: 20),
-                                            ),
-                                          ),
-                                        ],
+                              child: Stack(children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: Colors.black.withOpacity(0.2)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 3,
+                                        offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(Icons.star,
+                                                    color:
+                                                        AppColors.primaryOrange,
+                                                    size: 18),
+                                                SizedBox(width: 4),
+                                                Text("4.5",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 14)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Center(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: Image.network(
+                                              food["imageUrl"] ?? "",
+                                              height: 100,
+                                              width: 100,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  const Icon(Icons
+                                                      .image_not_supported),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          food["name"] ?? "",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const Spacer(),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "₹${food["price"]}.00",
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          'Food item successfully added',
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .primaryOrange,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                        Icon(
+                                                          Icons
+                                                              .check_circle_outline,
+                                                          color: AppColors
+                                                              .primaryOrange,
+                                                        )
+                                                      ],
+                                                    ),
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    behavior: SnackBarBehavior
+                                                        .floating,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    duration: const Duration(
+                                                        seconds: 2),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: 35,
+                                                width: 35,
+                                                decoration: const BoxDecoration(
+                                                  color:
+                                                      AppColors.primaryOrange,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(Icons.add,
+                                                    color: Colors.white,
+                                                    size: 20),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                BlocBuilder<FavoriteBloc, FavoriteState>(
+                                  builder: (context, favState) {
+                                    final isFav = favState.favorites
+                                        .any((item) => item['id'] == id);
+                                    return Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 35,
+                                        width: 35,
+                                        decoration: const BoxDecoration(
+                                          color: AppColors.primaryOrange,
+                                          borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(20),
+                                            bottomLeft: Radius.circular(10),
+                                          ),
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            if (isFav) {
+                                              context
+                                                  .read<FavoriteBloc>()
+                                                  .add(RemoveFromFavorite(id));
+                                            } else {
+                                              final favItems = {
+                                                'id': id,
+                                                'name': food['name'],
+                                                'price': food['price'],
+                                                'prepTimeMinutes':
+                                                    food['prepTimeMinutes'],
+                                                "imageUrl": food['imageUrl']
+                                              };
+                                              context
+                                                  .read<FavoriteBloc>()
+                                                  .add(AddToFavorite(favItems));
+                                            }
+                                          },
+                                          icon: Icon(
+                                            isFav
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: Colors.white,
+                                          ),
+                                          padding: EdgeInsets
+                                              .zero, // centers the icon properly
+                                          constraints:
+                                              const BoxConstraints(), // removes default extra padding
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              ]),
                             );
                           },
                         );
