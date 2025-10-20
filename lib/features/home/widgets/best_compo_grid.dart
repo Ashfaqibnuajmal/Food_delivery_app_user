@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
+import 'package:mera_app/features/home/screens/food_details.dart';
 
 class BestCompoCardGrid extends StatelessWidget {
   const BestCompoCardGrid({super.key});
@@ -42,11 +43,18 @@ class BestCompoCardGrid extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final food = foodItems[index].data()! as Map<String, dynamic>;
+              final doc = foodItems[index];
+              final id = doc.id;
 
               return AspectRatio(
                 aspectRatio: 0.8,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FoodDetails(foodItemId: id)));
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(

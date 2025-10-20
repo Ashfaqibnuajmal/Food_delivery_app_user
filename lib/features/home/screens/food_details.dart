@@ -1,157 +1,299 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/core/widgets/loading.dart';
 
-class FoodDetails extends StatefulWidget {
-  const FoodDetails({super.key});
+// ignore: must_be_immutable
+class FoodDetails extends StatelessWidget {
+  final String foodItemId;
+  FoodDetails({super.key, required this.foodItemId});
 
-  @override
-  State<FoodDetails> createState() => _FoodDetailsState();
-}
-
-class _FoodDetailsState extends State<FoodDetails> {
   bool isHalfSelected = false;
-  bool isFullSelected = false;
-  bool isFav = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("FoodItems")
+            .doc(foodItemId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: LoadingIndicator());
+          }
+
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: Text("❌ Food details not found"));
+          }
+
+          final food = snapshot.data!;
+          final image = food['imageUrl'] ?? '';
+          final name = food['name'] ?? 'Unknown';
+          final prepTime = food['prepTimeMinutes'] ?? 0;
+          final calories = food['calories'] ?? 0;
+          final price = food['price'] ?? 0;
+          final halfPrice = food["halfPrice"] ?? 0;
+          final description = food['description'] ?? '';
+          final isHalfAvailable = food['isHalfAvailable'] ?? false;
+
+          return SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
                 children: [
-                  Container(
-                    height: 400,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryOrange,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 30,
-                    left: 15,
-                    right: 16,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              isFav = !isFav;
-                            });
-                          },
-                          icon: Icon(
-                            isFav ? Icons.favorite : Icons.favorite_border,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -5,
-                    left: 30,
-                    right: 30,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
-                      child: Image.asset(
-                        "assets/intro_image1.jpeg",
-                        fit: BoxFit.cover,
+                  // 🟧 Header Image + Icons
+                  Stack(
+                    children: [
+                      Container(
+                        height: 350,
                         width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryOrange,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 10,
+                        right: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.favorite_border,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        bottom: -10,
+                        left: 40,
+                        right: 40,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            image,
+                            fit: BoxFit.fill,
+                            height: 300,
+                            width: double.infinity,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.image, size: 100),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Gap(30),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ⭐ Info Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.star,
+                              size: 16, color: AppColors.primaryOrange),
+                          const SizedBox(width: 8),
+                          Text('4.5',
+                              style: TextStyle(color: Colors.grey.shade700)),
+                        ],
+                      ),
+                      Container(
+                        width: 1,
+                        height: 15,
+                        color: Colors.black,
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.timer_outlined,
+                              size: 16, color: AppColors.primaryOrange),
+                          const SizedBox(width: 8),
+                          Text('$prepTime min',
+                              style: TextStyle(color: Colors.grey.shade700)),
+                        ],
+                      ),
+                      Container(
+                        width: 1,
+                        height: 15,
+                        color: Colors.black,
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.local_fire_department,
+                              size: 16, color: AppColors.primaryOrange),
+                          const SizedBox(width: 8),
+                          Text('$calories Ka',
+                              style: TextStyle(color: Colors.grey.shade700)),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // 📝 Description
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Text(
+                      description,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        height: 1.4,
                       ),
                     ),
                   ),
-                ],
-              ),
-              const Gap(10),
-              const Text(
-                "Chicken Biriyani",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _infoItem(Icons.star, '4.5'),
-                  _verticalDivier(),
-                  _infoItem(Icons.timer_outlined, '8-10 min'),
-                  _verticalDivier(),
-                  _infoItem(Icons.local_fire_department, "124 Ka"),
-                ],
-              ),
-              const SizedBox(height: 14),
 
-              // ---------- Description ----------
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  "Rich in protein, carbohydrates, and healthy fats, this dish fuels both body and taste. "
-                  "Prepared with fresh Malabar spices, tender chicken is slow-cooked and layered with aromatic short-grain rice. "
-                  "Served with raita and salad, our Chicken Biriyani is a flavorful and satisfying hometown classic.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                    height: 1.4,
+                  const SizedBox(height: 30),
+
+                  // 🍛 Half / Full Buttons (Static UI)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (isHalfAvailable) // Only show if half portion exists
+                        Container(
+                          width: 140,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white, // static white background
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.primaryOrange),
+                          ),
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.network(
+                                  image,
+                                  height: 70,
+                                  width: 70,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              const Text(
+                                "Half",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "₹$halfPrice.00",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // Full portion (always visible)
+                      Container(
+                        width: 140,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white, // static white background
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.primaryOrange),
+                        ),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                image,
+                                height: 70,
+                                width: 70,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            const Text(
+                              "Full",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "₹$price.00",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 30),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _portionButton("Half", "6-8 min", isHalfSelected, () {
-                    setState(() {
-                      isHalfSelected = !isHalfSelected;
-                      if (isHalfSelected) isFullSelected = false;
-                    });
-                  }),
-                  _portionButton("Full", "8-10 min", isFullSelected, () {
-                    setState(() {
-                      isFullSelected = !isFullSelected;
-                      if (isFullSelected) isHalfSelected = false;
-                    });
-                  }),
+                  const SizedBox(height: 100),
                 ],
               ),
-
-              const SizedBox(height: 100), // instead of Spacer()
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
+
+      // 🛒 Add to Cart Button
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20),
         child: SizedBox(
           width: double.infinity,
           height: 50,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    "✅ Added to cart successfully",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: AppColors.primaryOrange,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryOrange,
               shape: RoundedRectangleBorder(
@@ -167,70 +309,4 @@ class _FoodDetailsState extends State<FoodDetails> {
       ),
     );
   }
-}
-
-Widget _infoItem(IconData icon, String text) {
-  return Row(
-    children: [
-      Icon(
-        icon,
-        size: 16,
-        color: Colors.grey.shade700,
-      ),
-      const SizedBox(width: 8),
-      Text(
-        text,
-        style: TextStyle(color: Colors.grey.shade700),
-      ),
-    ],
-  );
-}
-
-Widget _verticalDivier() {
-  return Container(
-    width: 1,
-    height: 15,
-    color: Colors.black,
-    margin: const EdgeInsets.symmetric(horizontal: 10),
-  );
-}
-
-// Portion button widget
-Widget _portionButton(
-    String title, String time, bool isSelected, VoidCallback onTap) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      width: 120,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      decoration: BoxDecoration(
-        color: isSelected ? Colors.orange : Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange),
-      ),
-      child: Column(
-        children: [
-          Image.asset(
-            "assets/intro_image1.jpeg",
-            height: 50,
-            width: 50,
-          ),
-          const SizedBox(height: 5),
-          Text(
-            title,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            time,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black54,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }
