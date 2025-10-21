@@ -11,6 +11,7 @@ import 'package:mera_app/features/auth/presentation/screens/login.dart';
 import 'package:mera_app/features/auth/presentation/screens/sign_up.dart';
 import 'package:mera_app/features/bottom_nav/screens/main_navigation.dart';
 import 'package:mera_app/features/home/bloc/ai_chat_bloc.dart';
+import 'package:mera_app/features/home/cubit/today_offer_cubit.dart';
 import 'package:mera_app/features/onboarding/screens/intro_screen.dart';
 import 'package:mera_app/features/onboarding/screens/splash_screen.dart';
 import 'package:mera_app/core/constant/firebase_options.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
             create: (context) => FoodSearchBloc()..add(const SetFoodItems([])),
           ),
           BlocProvider(create: (context) => FavoriteBloc()),
+          BlocProvider(create: (context) => TodayOfferCubit()),
           BlocProvider(create: (context) => AuthBlocBloc()),
           BlocProvider(create: (context) => AiChatBloc())
         ],

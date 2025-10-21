@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
+import 'package:mera_app/features/home/cubit/today_offer_cubit.dart';
 
 class TodayOfferCard extends StatelessWidget {
   const TodayOfferCard({super.key});
@@ -163,13 +165,15 @@ class TodayOfferCard extends StatelessWidget {
             );
           },
           options: CarouselOptions(
-            height: 190,
-            autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 3),
-            enlargeCenterPage: true,
-            enlargeFactor: 0.18,
-            viewportFraction: 0.8,
-          ),
+              height: 190,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              enlargeCenterPage: true,
+              enlargeFactor: 0.18,
+              viewportFraction: 0.8,
+              onPageChanged: (index, reason) {
+                context.read<TodayOfferCubit>().changeIndex(index);
+              }),
         );
       },
     );

@@ -19,8 +19,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final int _currentIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 25),
             const TodayOfferCard(),
             const SizedBox(height: 12),
-            TodayOfferFooter(currentIndex: _currentIndex),
+            TodayOfferFooter(),
             const SizedBox(height: 40),
             const BestCompoHeading(),
             const SizedBox(height: 10),
