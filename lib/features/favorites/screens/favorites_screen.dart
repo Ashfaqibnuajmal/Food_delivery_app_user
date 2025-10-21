@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_bloc.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_event.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_state.dart';
+import 'package:mera_app/core/blocs/search/search_bloc.dart';
+import 'package:mera_app/core/blocs/search/search_event.dart';
+import 'package:mera_app/core/blocs/search/search_state.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 
-class FavoritesScreen extends StatelessWidget {
+class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
+
+  @override
+  State<FavoritesScreen> createState() => _FavoritesScreenState();
+}
+
+class _FavoritesScreenState extends State<FavoritesScreen> {
+  late final TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    context.read<FoodSearchBloc>().stream.listen((state) {
+      if (_controller.text != state.query) {
+        _controller.text = state.query;
+        _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +82,72 @@ class FavoritesScreen extends StatelessWidget {
                 )
               ],
             ),
-            child: const Row(
+            child: Row(
               children: [
-                SizedBox(width: 12),
-                Icon(
+                const SizedBox(width: 12),
+                const Icon(
                   Icons.search,
                   color: Colors.black54,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    "Search...",
-                    style: TextStyle(color: Colors.black54, fontSize: 16),
+                    child: TextFormField(
+                  controller: _controller,
+                  decoration: const InputDecoration(
+                    hintText: "Search...",
+                    hintStyle: TextStyle(color: Colors.black54, fontSize: 16),
+                    border: InputBorder.none,
                   ),
-                ),
+                  onChanged: (value) {
+                    context.read<FoodSearchBloc>().add(UpdateQuery(value));
+                  },
+                )),
+                BlocBuilder<FoodSearchBloc, FoodSearchState>(
+                  builder: (context, state) {
+                    if (state.query.isEmpty) {
+                      return const SizedBox(width: 0);
+                    }
+                    return Container(
+                      height: 30,
+                      width: 30,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: const BoxDecoration(
+                          color: Color(0xFFFFE0B2), shape: BoxShape.circle),
+                      child: Center(
+                        child: IconButton(
+                          onPressed: () {
+                            context
+                                .read<FoodSearchBloc>()
+                                .add(const UpdateQuery(""));
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.primaryOrange,
+                            size: 20,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ),
+                    );
+                  },
+                )
               ],
             ),
           ),
           Expanded(
             child: BlocBuilder<FavoriteBloc, FavoriteState>(
               builder: (context, state) {
-                final favorites = state.favorites;
+                // Get the current search query from FoodSearchBloc
+                final query = context.select(
+                    (FoodSearchBloc bloc) => bloc.state.query.toLowerCase());
+
+// Filter favorites based on the search query (case-insensitive)
+                final favorites = state.favorites.where((fav) {
+                  final name = (fav['name'] ?? '').toString().toLowerCase();
+                  return name.contains(query);
+                }).toList();
+
                 if (favorites.isEmpty) {
                   return const Center(
                     child: Column(

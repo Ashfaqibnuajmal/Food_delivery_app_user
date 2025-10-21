@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_bloc.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_event.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
 
@@ -102,26 +102,20 @@ class _FoodDetailsState extends State<FoodDetails> {
                                 size: 30,
                               ),
                             ),
-
-                            // FAVORITE BUTTON: uses FavoriteBloc
                             BlocBuilder<FavoriteBloc, dynamic>(
                               builder: (context, favState) {
-                                // safe check: favState.favorites should be List<Map<String,dynamic>>
                                 final favList =
                                     (favState is Map || favState == null)
                                         ? <Map<String, dynamic>>[]
                                         : (favState.favorites ??
                                             <Map<String, dynamic>>[]);
 
-                                // fallback if bloc has different type (defensive)
                                 List<Map<String, dynamic>> favorites =
                                     <Map<String, dynamic>>[];
                                 try {
                                   favorites =
                                       List<Map<String, dynamic>>.from(favList);
-                                } catch (_) {
-                                  // ignore and use empty
-                                }
+                                } catch (_) {}
 
                                 final bool isFav = favorites.any((item) =>
                                     item['id']?.toString() ==

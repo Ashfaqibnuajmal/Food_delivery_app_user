@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_bloc.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_event.dart';
-import 'package:mera_app/core/blocs/favorite/favorite_state.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
+import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
 import 'package:mera_app/core/blocs/search/search_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_event.dart';
 import 'package:mera_app/core/blocs/search/search_state.dart';
