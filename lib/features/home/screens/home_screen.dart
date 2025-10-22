@@ -10,7 +10,6 @@ import 'package:mera_app/features/home/widgets/today_offer_card.dart';
 import 'package:mera_app/features/home/widgets/today_offer_footer.dart';
 import 'package:mera_app/features/home/widgets/today_offer_title.dart';
 
-// ──────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -21,34 +20,34 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
-      appBar: const HomeAppBar(),
+      appBar: HomeAppBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SearchBarWidget(),
-            const SizedBox(height: 30),
-            const TodayOfferTitle(),
-            const SizedBox(height: 25),
-            const TodayOfferCard(),
-            const SizedBox(height: 12),
+            SearchBarWidget(),
+            SizedBox(height: 30),
+            TodayOfferTitle(),
+            SizedBox(height: 25),
+            TodayOfferCard(),
+            SizedBox(height: 12),
             TodayOfferFooter(),
-            const SizedBox(height: 40),
-            const BestCompoHeading(),
-            const SizedBox(height: 10),
-            const BestCompoCardGrid(),
-            const SizedBox(height: 30),
-            const RecommendedTitle(),
-            const SizedBox(height: 20),
-            const SizedBox(
+            SizedBox(height: 40),
+            BestCompoHeading(),
+            SizedBox(height: 10),
+            BestCompoCardGrid(),
+            SizedBox(height: 30),
+            RecommendedTitle(),
+            SizedBox(height: 20),
+            SizedBox(
               height: 95,
               child: CategoryList(),
             ),
-            const SizedBox(height: 20),
-            const FoodItemsList(),
+            SizedBox(height: 20),
+            FoodItemsList(),
           ],
         ),
       ),

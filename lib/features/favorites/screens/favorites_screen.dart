@@ -190,8 +190,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     final name = (fav['name'] ?? '') as String;
                     final price =
                         fav['price'] != null ? fav['price'].toString() : '';
-                    final rating =
-                        fav['rating'] != null ? fav['rating'].toString() : '';
+
                     final prepTime = fav['prepTimeMinutes'] != null
                         ? fav['prepTimeMinutes'].toString()
                         : '';
@@ -279,20 +278,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(height: 2),
-                                          Row(
+                                          const SizedBox(height: 4),
+                                          const Row(
                                             children: [
-                                              const Icon(
+                                              Icon(
                                                 Icons.star,
                                                 color: AppColors.primaryOrange,
                                                 size: 14,
                                               ),
-                                              const SizedBox(width: 4),
+                                              SizedBox(width: 4),
                                               Text(
-                                                rating.isNotEmpty
-                                                    ? rating
-                                                    : ' 4.5',
-                                                style: const TextStyle(
+                                                ' 4.5',
+                                                style: TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
@@ -306,7 +303,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                             children: [
                                               Text(
                                                 price.isNotEmpty
-                                                    ? "₹ $price.00"
+                                                    ? " ₹ $price.00"
                                                     : "",
                                                 style: const TextStyle(
                                                   color: Colors.black,
