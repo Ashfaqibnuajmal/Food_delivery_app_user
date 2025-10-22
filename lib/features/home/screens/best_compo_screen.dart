@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_event.dart';
+import 'package:mera_app/features/cart/bloc/cart_state.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
@@ -339,64 +342,86 @@ class _BestCompoScreenState extends State<BestCompoScreen> {
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Food item successfully added',
-                                                            style: TextStyle(
-                                                              color: AppColors
-                                                                  .primaryOrange,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
+                                              BlocBuilder<CartBloc, CartState>(
+                                                builder: (context, state) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      final cartItems = {
+                                                        'id': id,
+                                                        'name': food['name'],
+                                                        'price': food['price'],
+                                                        'prepTimeMinutes': food[
+                                                            'prepTimeMinutes'],
+                                                        'imageUrl':
+                                                            food['imageUrl']
+                                                      };
+                                                      context
+                                                          .read<CartBloc>()
+                                                          .add(AddToCart(
+                                                              cartItems));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: const Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                'Food item successfully added',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: AppColors
+                                                                      .primaryOrange,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              Icon(
+                                                                Icons
+                                                                    .check_circle_outline,
+                                                                color: AppColors
+                                                                    .primaryOrange,
+                                                              )
+                                                            ],
                                                           ),
-                                                          Icon(
-                                                            Icons
-                                                                .check_circle_outline,
-                                                            color: AppColors
-                                                                .primaryOrange,
-                                                          )
-                                                        ],
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                                  seconds: 2),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color: AppColors
+                                                            .primaryOrange,
+                                                        shape: BoxShape.circle,
                                                       ),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      behavior: SnackBarBehavior
-                                                          .floating,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
+                                                      child: const Icon(
+                                                        Icons.add,
+                                                        color: Colors.white,
+                                                        size: 20,
                                                       ),
-                                                      duration: const Duration(
-                                                          seconds: 2),
                                                     ),
                                                   );
                                                 },
-                                                child: Container(
-                                                  height: 35,
-                                                  width: 35,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color:
-                                                        AppColors.primaryOrange,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.add,
-                                                    color: Colors.white,
-                                                    size: 20,
-                                                  ),
-                                                ),
                                               )
                                             ],
                                           ),

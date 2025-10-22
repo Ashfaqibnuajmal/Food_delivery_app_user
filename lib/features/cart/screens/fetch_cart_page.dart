@@ -3,19 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_event.dart';
 import 'package:mera_app/core/blocs/search/search_state.dart';
-import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
-import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
-import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
 import 'package:mera_app/core/theme/app_color.dart';
+import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_event.dart';
+import 'package:mera_app/features/cart/bloc/cart_state.dart';
 
-class FavoritesScreen extends StatefulWidget {
-  const FavoritesScreen({super.key});
+class FetchCartPage extends StatefulWidget {
+  const FetchCartPage({super.key});
 
   @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
+  State<FetchCartPage> createState() => _FetchCartPageState();
 }
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
+class _FetchCartPageState extends State<FetchCartPage> {
   late final TextEditingController _controller;
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          'Favorites',
+          'Cart Page',
           style: TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -136,18 +136,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
           ),
           Expanded(
-            child: BlocBuilder<FavoriteBloc, FavoriteState>(
+            child: BlocBuilder<CartBloc, CartState>(
               builder: (context, state) {
                 // Get the current search query from FoodSearchBloc
                 final query = context.select(
                     (FoodSearchBloc bloc) => bloc.state.query.toLowerCase());
 
-                final favorites = state.favorites.where((fav) {
+                final cartItem = state.cartItems.where((fav) {
                   final name = (fav['name'] ?? '').toString().toLowerCase();
                   return name.contains(query);
                 }).toList();
 
-                if (favorites.isEmpty) {
+                if (cartItem.isEmpty) {
                   return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +159,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          "No Favorites Items!",
+                          "No cart Items!",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -180,18 +180,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 return ListView.builder(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
-                  itemCount: favorites.length,
+                  itemCount: cartItem.length,
                   itemBuilder: (context, index) {
-                    final fav = favorites[index];
-                    final id = fav['id']?.toString() ?? '';
+                    final cart = cartItem[index];
+                    final id = cart['id']?.toString() ?? '';
                     final imageUrl =
-                        (fav['imageUrl'] ?? fav['image'] ?? '') as String;
-                    final name = (fav['name'] ?? '') as String;
+                        (cart['imageUrl'] ?? cart['image'] ?? '') as String;
+                    final name = (cart['name'] ?? '') as String;
                     final price =
-                        fav['price'] != null ? fav['price'].toString() : '';
+                        cart['price'] != null ? cart['price'].toString() : '';
 
-                    final prepTime = fav['prepTimeMinutes'] != null
-                        ? fav['prepTimeMinutes'].toString()
+                    final prepTime = cart['prepTimeMinutes'] != null
+                        ? cart['prepTimeMinutes'].toString()
                         : '';
 
                     return Padding(
@@ -309,85 +309,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Food item successfully added',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .primaryOrange,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          Icon(
-                                                              Icons
-                                                                  .check_circle_outline,
-                                                              color: AppColors
-                                                                  .primaryOrange),
-                                                        ],
-                                                      ),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      behavior: SnackBarBehavior
-                                                          .floating,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      duration: const Duration(
-                                                          seconds: 2),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.primaryOrange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    boxShadow: const [
-                                                      BoxShadow(
-                                                        color: Colors.black26,
-                                                        blurRadius: 2,
-                                                        offset: Offset(1, 2),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: const Row(
-                                                    children: [
-                                                      Text(
-                                                        "Add",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                      SizedBox(width: 4),
-                                                      Icon(
-                                                          Icons
-                                                              .add_circle_rounded,
-                                                          color: Colors.black),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
                                             ],
                                           ),
                                           const SizedBox(height: 4),
@@ -413,8 +334,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   child: IconButton(
                                     onPressed: () {
                                       context
-                                          .read<FavoriteBloc>()
-                                          .add(RemoveFromFavorite(id));
+                                          .read<CartBloc>()
+                                          .add(RemoveCartItems(id));
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
@@ -423,7 +344,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                'Remove from favorites!',
+                                                'Remove from Cart!',
                                                 style: TextStyle(
                                                     color: Colors.red,
                                                     fontWeight:
@@ -446,7 +367,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                       );
                                     },
                                     icon: const Icon(
-                                      Icons.favorite,
+                                      Icons.delete,
                                       color: Colors.white,
                                     ),
                                     padding: EdgeInsets

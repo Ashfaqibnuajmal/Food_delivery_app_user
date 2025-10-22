@@ -23,7 +23,6 @@ class RemoveFromFavorite extends FavoriteEvent {
   List<Object?> get props => [itemId];
 }
 
-// ✅ New Event to Load from SharedPreferences
 class LoadFavorites extends FavoriteEvent {
   const LoadFavorites();
 }

@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/blocs/category/food_category_filter_cubit.dart';
+import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_event.dart';
+import 'package:mera_app/features/cart/bloc/cart_state.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
@@ -175,37 +178,108 @@ class FoodItemsList extends StatelessWidget {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15),
                                             ),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryOrange,
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                boxShadow: const [
-                                                  BoxShadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 2,
-                                                    offset: Offset(1, 2),
+                                            BlocBuilder<CartBloc, CartState>(
+                                              builder: (context, state) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    final cartItems = {
+                                                      'id': id,
+                                                      'name': food['name'],
+                                                      'price': food['price'],
+                                                      'prepTimeMinutes': food[
+                                                          'prepTimeMinutes'],
+                                                      'imageUrl':
+                                                          food['imageUrl']
+                                                    };
+                                                    context
+                                                        .read<CartBloc>()
+                                                        .add(AddToCart(
+                                                            cartItems));
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              'Food item successfully added',
+                                                              style: TextStyle(
+                                                                color: AppColors
+                                                                    .primaryOrange,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .check_circle_outline,
+                                                              color: AppColors
+                                                                  .primaryOrange,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        behavior:
+                                                            SnackBarBehavior
+                                                                .floating,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        duration:
+                                                            const Duration(
+                                                                seconds: 2),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .primaryOrange,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                          color: Colors.black26,
+                                                          blurRadius: 2,
+                                                          offset: Offset(1, 2),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: const Row(
+                                                      children: [
+                                                        Text(
+                                                          "Add",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.black),
+                                                        ),
+                                                        SizedBox(width: 4),
+                                                        Icon(
+                                                            Icons
+                                                                .add_circle_rounded,
+                                                            color:
+                                                                Colors.black),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ],
-                                              ),
-                                              child: const Row(
-                                                children: [
-                                                  Text(
-                                                    "Add",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black),
-                                                  ),
-                                                  SizedBox(width: 4),
-                                                  Icon(Icons.add_circle_rounded,
-                                                      color: Colors.black),
-                                                ],
-                                              ),
+                                                );
+                                              },
                                             ),
                                           ],
                                         ),

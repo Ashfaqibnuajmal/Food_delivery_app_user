@@ -10,13 +10,9 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
     on<AddToFavorite>(_onAddFavorite);
     on<RemoveFromFavorite>(_onRemoveFavorite);
 
-    // ✅ Load favorites automatically when bloc starts
     add(const LoadFavorites());
   }
 
-  // -----------------------------
-  // Load saved favorites
-  // -----------------------------
   Future<void> _onLoadFavorites(
       LoadFavorites event, Emitter<FavoriteState> emit) async {
     final prefs = await SharedPreferences.getInstance();
@@ -30,9 +26,6 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
     }
   }
 
-  // -----------------------------
-  // Add to favorite
-  // -----------------------------
   Future<void> _onAddFavorite(
       AddToFavorite event, Emitter<FavoriteState> emit) async {
     final updated = List<Map<String, dynamic>>.from(state.favorites);
