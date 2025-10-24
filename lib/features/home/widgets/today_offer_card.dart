@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
 import 'package:mera_app/features/home/cubit/today_offer_cubit.dart';
+import 'package:mera_app/features/home/screens/food_details.dart';
 
 class TodayOfferCard extends StatelessWidget {
   const TodayOfferCard({super.key});
@@ -32,6 +33,8 @@ class TodayOfferCard extends StatelessWidget {
           itemCount: foodItems.length,
           itemBuilder: (context, index, realIdx) {
             final food = foodItems[index].data()! as Map<String, dynamic>;
+            final doc = foodItems[index];
+            final id = doc.id;
 
             return Container(
               width: 460,
@@ -127,21 +130,23 @@ class TodayOfferCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            SizedBox(
-                              height: 30,
-                              width: 90,
-                              child: Material(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(25),
-                                elevation: 3,
-                                child: InkWell(
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FoodDetails(foodItemId: id),
+                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                height: 30,
+                                width: 90,
+                                child: Material(
+                                  color: Colors.black,
                                   borderRadius: BorderRadius.circular(25),
-                                  splashColor:
-                                      AppColors.primaryOrange.withOpacity(0.2),
-                                  highlightColor: Colors.transparent,
-                                  onTap: () {
-                                    // You can add navigation or order logic here
-                                  },
+                                  elevation: 3,
                                   child: const Center(
                                     child: Text(
                                       "Order Now",
