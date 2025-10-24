@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/features/cart/bloc/cart_event.dart';
 import 'package:mera_app/features/cart/bloc/cart_state.dart';
@@ -10,8 +9,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCarts>(_onLoadCartItems);
     on<AddToCart>(_onAddCart);
     on<RemoveCartItems>(_onRemoveCart);
+
+    // ✅ New: Handle quantity updates
+    on<UpdateCartItemQuantity>(_onUpdateCartItemQuantity);
+
     add(const LoadCarts());
   }
+
   Future<void> _onLoadCartItems(
       LoadCarts event, Emitter<CartState> emit) async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,6 +44,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       ..removeWhere((item) => item['id'] == event.itemId);
     emit(state.copyWith(cartItems: updated));
     await _saveToCart(updated);
+  }
+
+  // ✅ New: Update quantity of a cart item
+  Future<void> _onUpdateCartItemQuantity(
+      UpdateCartItemQuantity event, Emitter<CartState> emit) async {
+    final updatedCartItems = state.cartItems.map((item) {
+      if (item['id'] == event.id) {
+        return {
+          ...item,
+          'quantity': event.quantity, // update quantity
+        };
+      }
+      return item;
+    }).toList();
+
+    emit(state.copyWith(cartItems: updatedCartItems));
+    await _saveToCart(updatedCartItems); // save updated cart
   }
 
   Future<void> _saveToCart(List<Map<String, dynamic>> cartItems) async {

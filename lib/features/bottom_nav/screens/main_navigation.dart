@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/features/bottom_nav/cubit/main_navigation_bar_cubit.dart';
-import 'package:mera_app/features/cart/screens/fetch_cart_page.dart';
+import 'package:mera_app/features/cart/screens/cart_screen.dart';
 import 'package:mera_app/features/favorites/screens/favorites_screen.dart';
 import 'package:mera_app/features/home/screens/home_screen.dart';
 import 'package:mera_app/features/profile/screens/profile_screens.dart';
@@ -13,7 +13,7 @@ class BottomNavBar extends StatelessWidget {
   final List<Widget> _pages = const [
     HomeScreen(),
     FavoritesScreen(),
-    FetchCartPage(),
+    CartScreen(),
     ProfileScreens(),
   ];
 

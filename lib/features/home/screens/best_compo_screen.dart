@@ -353,7 +353,21 @@ class _BestCompoScreenState extends State<BestCompoScreen> {
                                                         'prepTimeMinutes': food[
                                                             'prepTimeMinutes'],
                                                         'imageUrl':
-                                                            food['imageUrl']
+                                                            food['imageUrl'],
+                                                        'calories':
+                                                            food['calories'],
+                                                        'category':
+                                                            food['category'],
+                                                        'description':
+                                                            food['description'],
+                                                        'halfPrice':
+                                                            food['halfPrice'],
+                                                        "isHalfAvailable": food[
+                                                            'isHalfAvailable'],
+                                                        'isTodayOffer': food[
+                                                            'isTodayOffer'],
+                                                        'isBestSeller': food[
+                                                            'isBestSeller'],
                                                       };
                                                       context
                                                           .read<CartBloc>()

@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_event.dart';
 import 'package:mera_app/core/blocs/search/search_state.dart';
+import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_event.dart';
+import 'package:mera_app/features/cart/bloc/cart_state.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_state.dart';
@@ -309,84 +312,123 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            'Food item successfully added',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .primaryOrange,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
+                                              BlocBuilder<CartBloc, CartState>(
+                                                builder: (context, state) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      final cartItems = {
+                                                        'id': id,
+                                                        'name': fav['name'],
+                                                        'price': fav['price'],
+                                                        'prepTimeMinutes': fav[
+                                                            'prepTimeMinutes'],
+                                                        'imageUrl':
+                                                            fav['imageUrl'],
+                                                        'calories':
+                                                            fav['calories'],
+                                                        'category':
+                                                            fav['category'],
+                                                        'description':
+                                                            fav['description'],
+                                                        'halfPrice':
+                                                            fav['halfPrice'],
+                                                        "isHalfAvailable": fav[
+                                                            'isHalfAvailable'],
+                                                        'isTodayOffer':
+                                                            fav['isTodayOffer'],
+                                                        'isBestSeller':
+                                                            fav['isBestSeller'],
+                                                      };
+                                                      context
+                                                          .read<CartBloc>()
+                                                          .add(AddToCart(
+                                                              cartItems));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: const Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                'Food item successfully added',
+                                                                style: TextStyle(
+                                                                    color: AppColors
+                                                                        .primaryOrange,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              Icon(
+                                                                  Icons
+                                                                      .check_circle_outline,
+                                                                  color: AppColors
+                                                                      .primaryOrange),
+                                                            ],
                                                           ),
-                                                          Icon(
-                                                              Icons
-                                                                  .check_circle_outline,
-                                                              color: AppColors
-                                                                  .primaryOrange),
-                                                        ],
-                                                      ),
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      behavior: SnackBarBehavior
-                                                          .floating,
-                                                      shape:
-                                                          RoundedRectangleBorder(
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                                  seconds: 2),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .primaryOrange,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(8),
+                                                                .circular(50),
+                                                        boxShadow: const [
+                                                          BoxShadow(
+                                                            color:
+                                                                Colors.black26,
+                                                            blurRadius: 2,
+                                                            offset:
+                                                                Offset(1, 2),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      duration: const Duration(
-                                                          seconds: 2),
+                                                      child: const Row(
+                                                        children: [
+                                                          Text(
+                                                            "Add",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .black),
+                                                          ),
+                                                          SizedBox(width: 4),
+                                                          Icon(
+                                                              Icons
+                                                                  .add_circle_rounded,
+                                                              color:
+                                                                  Colors.black),
+                                                        ],
+                                                      ),
                                                     ),
                                                   );
                                                 },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        AppColors.primaryOrange,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    boxShadow: const [
-                                                      BoxShadow(
-                                                        color: Colors.black26,
-                                                        blurRadius: 2,
-                                                        offset: Offset(1, 2),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: const Row(
-                                                    children: [
-                                                      Text(
-                                                        "Add",
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                      SizedBox(width: 4),
-                                                      Icon(
-                                                          Icons
-                                                              .add_circle_rounded,
-                                                          color: Colors.black),
-                                                    ],
-                                                  ),
-                                                ),
                                               ),
                                             ],
                                           ),

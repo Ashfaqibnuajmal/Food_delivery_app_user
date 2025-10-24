@@ -452,7 +452,22 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                   food[
                                                                       'prepTimeMinutes'],
                                                               'imageUrl': food[
-                                                                  'imageUrl']
+                                                                  'imageUrl'],
+                                                              'calories': food[
+                                                                  'calories'],
+                                                              'category': food[
+                                                                  'category'],
+                                                              'description': food[
+                                                                  'description'],
+                                                              'halfPrice': food[
+                                                                  'halfPrice'],
+                                                              "isHalfAvailable":
+                                                                  food[
+                                                                      'isHalfAvailable'],
+                                                              'isTodayOffer': food[
+                                                                  'isTodayOffer'],
+                                                              'isBestSeller': food[
+                                                                  'isBestSeller'],
                                                             };
                                                             context
                                                                 .read<

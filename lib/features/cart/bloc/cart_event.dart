@@ -23,3 +23,10 @@ class RemoveCartItems extends CartEvent {
 class LoadCarts extends CartEvent {
   const LoadCarts();
 }
+
+class UpdateCartItemQuantity extends CartEvent {
+  final String id;
+  final int quantity;
+
+  const UpdateCartItemQuantity({required this.id, required this.quantity});
+}

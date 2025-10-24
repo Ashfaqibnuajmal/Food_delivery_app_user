@@ -137,7 +137,18 @@ class BestCompoCardGrid extends StatelessWidget {
                                                 'price': food['price'],
                                                 'prepTimeMinutes':
                                                     food['prepTimeMinutes'],
-                                                'imageUrl': food['imageUrl']
+                                                'imageUrl': food['imageUrl'],
+                                                'calories': food['calories'],
+                                                'category': food['category'],
+                                                'description':
+                                                    food['description'],
+                                                'halfPrice': food['halfPrice'],
+                                                "isHalfAvailable":
+                                                    food['isHalfAvailable'],
+                                                'isTodayOffer':
+                                                    food['isTodayOffer'],
+                                                'isBestSeller':
+                                                    food['isBestSeller'],
                                               };
                                               context
                                                   .read<CartBloc>()
