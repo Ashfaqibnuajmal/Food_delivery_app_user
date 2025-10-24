@@ -3,7 +3,16 @@ import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/features/cart/screens/address_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final double subtotal;
+  final double discount;
+  final double deliveryFee;
+  final double total;
+  const CheckoutScreen(
+      {super.key,
+      required this.subtotal,
+      required this.discount,
+      required this.deliveryFee,
+      required this.total});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -154,11 +163,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
             const Divider(height: 30),
 
-            _priceRow("Subtotal", "₹1200.00"),
-            _priceRow("Discount", "₹1000.00"),
-            _priceRow("Delivery", "₹100.00"),
+            _priceRow("Subtotal", "₹${widget.subtotal.toStringAsFixed(2)}"),
+            _priceRow("Discount", "₹${widget.discount.toStringAsFixed(2)}"),
+            _priceRow("Delivery", "₹${widget.deliveryFee.toStringAsFixed(2)}"),
             const Divider(thickness: 1),
-            _priceRow("Total", "₹300.00", isBold: true, fontSize: 20),
+            _priceRow("Total", "₹${widget.total.toStringAsFixed(2)}",
+                isBold: true, fontSize: 20),
+
             const Divider(height: 30),
 
             const SizedBox(height: 20),
