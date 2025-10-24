@@ -9,6 +9,7 @@ import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
+import 'package:mera_app/text.dart';
 
 class FoodDetails extends StatefulWidget {
   final String foodItemId;
@@ -241,103 +242,121 @@ class _FoodDetailsState extends State<FoodDetails> {
                     const SizedBox(height: 30),
 
                     // 🍛 Half / Full Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        if (isHalfAvailable)
-                          GestureDetector(
-                            onTap: () => setState(() => isHalfSelected = true),
-                            child: Container(
-                              width: 140,
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isHalfSelected
-                                    ? AppColors.primaryOrange.withOpacity(0.12)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border:
-                                    Border.all(color: AppColors.primaryOrange),
-                              ),
-                              child: Column(
-                                children: [
-                                  ClipRRect(
+                    BlocBuilder<FoodPortionCubit, bool>(
+                      builder: (context, isHalfSelected) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            if (isHalfAvailable)
+                              GestureDetector(
+                                onTap: () => context
+                                    .read<FoodPortionCubit>()
+                                    .selectHalf(),
+                                child: Container(
+                                  width: 140,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: isHalfSelected
+                                        ? AppColors.primaryOrange
+                                            .withOpacity(0.12)
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(12),
-                                    child: image.toString().isNotEmpty
-                                        ? Image.network(image,
-                                            height: 70,
-                                            width: 70,
-                                            fit: BoxFit.cover)
-                                        : Container(
-                                            width: 70,
-                                            height: 70,
-                                            color: Colors.grey[200]),
+                                    border: Border.all(
+                                        color: isHalfSelected
+                                            ? AppColors.primaryOrange
+                                            : Colors.grey.shade300,
+                                        width: isHalfSelected ? 2 : 1),
                                   ),
-                                  const SizedBox(height: 5),
-                                  const Text("Half",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 5),
-                                  Text("₹${halfPrice.toString()}.00",
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black)),
-                                ],
+                                  child: Column(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: image.toString().isNotEmpty
+                                            ? Image.network(image,
+                                                height: 70,
+                                                width: 70,
+                                                fit: BoxFit.cover)
+                                            : Container(
+                                                width: 70,
+                                                height: 70,
+                                                color: Colors.grey[200]),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      const Text("Half",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 5),
+                                      Text("₹${halfPrice.toString()}.00",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black)),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
 
-                        // Full Portion
-                        GestureDetector(
-                          onTap: () => setState(() => isHalfSelected = false),
-                          child: Container(
-                            width: 140,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            decoration: BoxDecoration(
-                              color: !isHalfSelected
-                                  ? AppColors.primaryOrange.withOpacity(0.12)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border:
-                                  Border.all(color: AppColors.primaryOrange),
-                            ),
-                            child: Column(
-                              children: [
-                                ClipRRect(
+                            // Full Portion
+                            GestureDetector(
+                              onTap: () =>
+                                  context.read<FoodPortionCubit>().selectFull(),
+                              child: Container(
+                                width: 140,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: !isHalfSelected
+                                      ? AppColors.primaryOrange
+                                          .withOpacity(0.12)
+                                      : Colors.white,
                                   borderRadius: BorderRadius.circular(12),
-                                  child: image.toString().isNotEmpty
-                                      ? Image.network(
-                                          image,
-                                          height: 70,
-                                          width: 70,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
+                                  border: Border.all(
+                                    color: !isHalfSelected
+                                        ? AppColors.primaryOrange
+                                        : Colors.grey.shade300,
+                                    width: !isHalfSelected ? 2 : 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: image.toString().isNotEmpty
+                                          ? Image.network(
+                                              image,
+                                              height: 70,
+                                              width: 70,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
                                                   const Icon(Icons.image,
                                                       size: 100),
-                                        )
-                                      : Container(
-                                          width: 70,
-                                          height: 70,
-                                          color: Colors.grey[200]),
+                                            )
+                                          : Container(
+                                              width: 70,
+                                              height: 70,
+                                              color: Colors.grey[200]),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const Text("Full",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 5),
+                                    Text("₹${price.toString()}.00",
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black)),
+                                  ],
                                 ),
-                                const SizedBox(height: 5),
-                                const Text("Full",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 5),
-                                Text("₹${price.toString()}.00",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black)),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
+                          ],
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 100),
@@ -369,7 +388,12 @@ class _FoodDetailsState extends State<FoodDetails> {
                                 'price': isHalfSelected ? halfPrice : price,
                                 'prepTimeMinutes': prepTime,
                                 'imageUrl': image.toString(),
-                                'isHalf': isHalfSelected,
+                                'isHalf':
+                                    isHalfSelected, // important flags/metadata
+                                'halfPrice': halfPrice,
+                                'isHalfAvailable': isHalfAvailable,
+                                'isTodayOffer': data['isTodayOffer'] ?? false,
+                                'quantity': 1,
                               };
 
                               context.read<CartBloc>().add(AddToCart(cartItem));
@@ -377,7 +401,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                    "✅ Added to cart successfully",
+                                    " Added to cart successfully",
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   backgroundColor: AppColors.primaryOrange,

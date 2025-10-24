@@ -18,6 +18,7 @@ import 'package:mera_app/features/home/cubit/today_offer_cubit.dart';
 import 'package:mera_app/features/onboarding/screens/intro_screen.dart';
 import 'package:mera_app/features/onboarding/screens/splash_screen.dart';
 import 'package:mera_app/core/constant/firebase_options.dart';
+import 'package:mera_app/text.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,9 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => FoodSearchBloc()..add(const SetFoodItems([])),
           ),
-          BlocProvider(create: (_) => FoodCategoryFilterCubit()),
+          BlocProvider(create: (context) => FoodCategoryFilterCubit()),
+          BlocProvider(
+              create: (context) => FoodPortionCubit(initialIsHalf: false)),
           BlocProvider(create: (context) => CartQuantityCubit()),
           BlocProvider(create: (context) => CartBloc()),
           BlocProvider(create: (context) => FavoriteBloc()),
