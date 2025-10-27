@@ -101,6 +101,13 @@ class _CartScreenState extends State<CartScreen> {
                         double.tryParse(cart['halfPrice']?.toString() ?? '0') ??
                             0;
                     final isHalfAvailable = cart['isHalfAvailable'] == true;
+                    final double actualPrice =
+                        isHalfAvailable ? halfPrice : price;
+                    final bool isTodayOffer = cart['isTodayOffer'] == true;
+
+// Apply 50% off if today offer
+                    final double finalPrice =
+                        isTodayOffer ? (actualPrice * 0.5) : actualPrice;
 
                     return Card(
                       color: Colors.white,
@@ -161,12 +168,21 @@ class _CartScreenState extends State<CartScreen> {
                                     style: const TextStyle(color: Colors.grey),
                                   ),
                                   const SizedBox(height: 5),
-                                  Text(
-                                    "₹ ${(isHalfAvailable ? halfPrice : price).toStringAsFixed(2)}",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "₹ ${finalPrice.toStringAsFixed(2)}",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: isTodayOffer
+                                              ? Colors.redAccent
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 5),
                                   const Row(
@@ -248,6 +264,7 @@ class _CartScreenState extends State<CartScreen> {
               final cartItems = state.cartItems;
 
               double subtotal = 0.0;
+              double discountTotal = 0.0;
               for (var item in cartItems) {
                 final id = item['id']?.toString() ?? '';
                 final isHalf = item['isHalf'] == true;
@@ -257,21 +274,36 @@ class _CartScreenState extends State<CartScreen> {
                           : (item['price'] ?? '0').toString(),
                     ) ??
                     0.0;
-                final quantity = context.read<CartQuantityCubit>().state[id] ??
-                    1; // ✅ correct
-                subtotal += price * quantity;
+                final isTodayOffer = item['isTodayOffer'] == true;
+                final quantity =
+                    context.read<CartQuantityCubit>().state[id] ?? 1;
+
+                double finalPrice = price;
+                double itemDiscount = 0.0;
+
+                if (isTodayOffer) {
+                  itemDiscount = price * 0.5; // 50% off per item
+                  finalPrice = price - itemDiscount;
+                }
+
+// add to totals
+                subtotal += finalPrice * quantity;
+                discountTotal +=
+                    itemDiscount * quantity; // 🆕 add total discount
               }
 
               const deliveryFee = 30.0;
               const discount = 0.0;
-              final total = subtotal - discount + deliveryFee;
+              final total =
+                  subtotal + deliveryFee; // subtotal already excludes discount
 
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
                     _priceRow("Subtotal", "₹${subtotal.toStringAsFixed(2)}"),
-                    _priceRow("Discount", "₹${discount.toStringAsFixed(2)}"),
+                    _priceRow(
+                        "Discount", "₹${discountTotal.toStringAsFixed(2)}"),
                     _priceRow(
                         "Delivery fee", "₹${deliveryFee.toStringAsFixed(2)}"),
                     const Divider(thickness: 1),
