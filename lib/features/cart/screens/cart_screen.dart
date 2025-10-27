@@ -6,6 +6,7 @@ import 'package:mera_app/features/cart/bloc/cart_event.dart';
 import 'package:mera_app/features/cart/bloc/cart_state.dart';
 import 'package:mera_app/features/cart/cubit/cart_quantity_cubit.dart';
 import 'package:mera_app/features/cart/screens/checkout_screen.dart';
+import 'package:mera_app/features/cart/screens/drinks_bottom_sheet.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -311,6 +312,90 @@ class _CartScreenState extends State<CartScreen> {
                         isBold: true, fontSize: 20),
                     const Divider(thickness: 1),
                     const SizedBox(height: 15),
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   height: 50,
+                    //   child: ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(25),
+                    //       ),
+                    //       backgroundColor: AppColors.primaryOrange,
+                    //     ),
+                    //     onPressed: () async {
+                    //       // ✅ Access cart items from Bloc
+                    //       final cartItems =
+                    //           context.read<CartBloc>().state.cartItems;
+
+                    //       // ✅ Check if there’s any Cool Drink
+                    //       final hasCoolDrink = cartItems.any(
+                    //         (item) =>
+                    //             (item['category']?.toString().toLowerCase() ??
+                    //                 '') ==
+                    //             'cool drinks',
+                    //       );
+                    //       final prefs = await SharedPreferences.getInstance();
+                    //       final bottomSheetShown =
+                    //           prefs.getBool('coolDrinkBottomSheetShown') ??
+                    //               false;
+
+                    //       if (hasCoolDrink || bottomSheetShown) {
+                    //         // ✅ If cool drink exists, go to checkout page
+                    //         Navigator.push(
+                    //           // ignore: use_build_context_synchronously
+                    //           context,
+                    //           MaterialPageRoute(
+                    //             builder: (context) => CheckoutScreen(
+                    //               subtotal: subtotal,
+                    //               discount: discount,
+                    //               deliveryFee: deliveryFee,
+                    //               total: total,
+                    //             ),
+                    //           ),
+                    //         );
+                    //       } else {
+                    //         await prefs.setBool(
+                    //             'coolDrinkBottomSheetShown', true);
+                    //         showModalBottomSheet(
+                    //           // ignore: use_build_context_synchronously
+                    //           context: context,
+                    //           isScrollControlled: true,
+                    //           backgroundColor: Colors.transparent,
+                    //           builder: (context) =>
+                    //               const CoolDrinksBottomSheet(),
+                    //         ).then((_) {
+                    //           Navigator.push(
+                    //               // ignore: use_build_context_synchronously
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (context) => CheckoutScreen(
+                    //                       subtotal: subtotal,
+                    //                       discount: discount,
+                    //                       deliveryFee: deliveryFee,
+                    //                       total: total)));
+                    //         });
+                    //       }
+                    //     },
+                    //     child: const Row(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: [
+                    //         Text(
+                    //           "Go to Checkout",
+                    //           style: TextStyle(
+                    //             fontSize: 16,
+                    //             color: Colors.black,
+                    //             fontWeight: FontWeight.bold,
+                    //           ),
+                    //         ),
+                    //         SizedBox(width: 5),
+                    //         Icon(
+                    //           Icons.arrow_forward_rounded,
+                    //           color: Colors.black,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -322,17 +407,41 @@ class _CartScreenState extends State<CartScreen> {
                           backgroundColor: AppColors.primaryOrange,
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CheckoutScreen(
-                                subtotal: subtotal,
-                                discount: discount,
-                                deliveryFee: deliveryFee,
-                                total: total,
-                              ),
-                            ),
+                          // ✅ Access cart items from Bloc
+                          final cartItems =
+                              context.read<CartBloc>().state.cartItems;
+
+                          // ✅ Check if there’s any Cool Drink
+                          final hasCoolDrink = cartItems.any(
+                            (item) =>
+                                (item['category']?.toString().toLowerCase() ??
+                                    '') ==
+                                'cool drinks',
                           );
+
+                          if (hasCoolDrink) {
+                            // ✅ If cool drink exists, go to checkout page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CheckoutScreen(
+                                  subtotal: subtotal,
+                                  discount: discount,
+                                  deliveryFee: deliveryFee,
+                                  total: total,
+                                ),
+                              ),
+                            );
+                          } else {
+                            // 🚫 Otherwise, show the CoolDrinks bottom sheet
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) =>
+                                  const CoolDrinksBottomSheet(),
+                            );
+                          }
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -349,11 +458,11 @@ class _CartScreenState extends State<CartScreen> {
                             Icon(
                               Icons.arrow_forward_rounded,
                               color: Colors.black,
-                            )
+                            ),
                           ],
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               );

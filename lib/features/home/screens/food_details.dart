@@ -9,7 +9,7 @@ import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_event.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
-import 'package:mera_app/text.dart';
+import 'package:mera_app/features/home/cubit/food_portion_cubit.dart';
 
 class FoodDetails extends StatefulWidget {
   final String foodItemId;
