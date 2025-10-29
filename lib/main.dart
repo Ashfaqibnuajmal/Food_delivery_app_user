@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/blocs/category/food_category_filter_cubit.dart';
 import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
 import 'package:mera_app/features/cart/cubit/cart_quantity_cubit.dart';
+import 'package:mera_app/features/cart/cubit/checkout_cubit.dart';
 import 'package:mera_app/features/cart/cubit/drink_selection_cubit.dart';
 import 'package:mera_app/features/favorites/bloc/favorite_bloc.dart';
 import 'package:mera_app/core/blocs/search/search_bloc.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(create: (context) => FoodCategoryFilterCubit()),
           BlocProvider(create: (context) => DrinkSelectionCubit()),
+          BlocProvider(create: (context) => CheckoutCubit()),
           BlocProvider(
               create: (context) => FoodPortionCubit(initialHalf: false)),
           BlocProvider(create: (context) => CartQuantityCubit()),

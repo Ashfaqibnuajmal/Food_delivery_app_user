@@ -32,6 +32,14 @@ class _CartScreenState extends State<CartScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 1,
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            color: Colors.black.withOpacity(0.1),
+          ),
+        ),
         centerTitle: true,
       ),
       body: Column(
@@ -43,44 +51,27 @@ class _CartScreenState extends State<CartScreen> {
                 final cartItems = state.cartItems;
 
                 if (cartItems.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.shopping_cart_rounded,
                           size: 70,
                           color: AppColors.primaryOrange,
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
+                        SizedBox(height: 10),
+                        Text(
                           "No Order Yet!",
                           style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16),
                         ),
-                        const Text(
+                        Text(
                           "When you add foods, they’ll\n appear here.",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black,
-                            backgroundColor: AppColors.primaryOrange,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 60, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: const Text(
-                            "Order Now",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
                         ),
                       ],
                     ),

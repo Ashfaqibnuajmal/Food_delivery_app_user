@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/theme/app_color.dart';
@@ -66,16 +68,35 @@ class CartServices {
   static void clearCart(BuildContext context) {
     final cartBloc = context.read<CartBloc>();
     cartBloc.add(ClearCart());
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Cart cleared",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+  static Future<List<Map<String, dynamic>>> getCartItems() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return [];
+    }
+    final snapshot = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user.uid)
+        .collection("Cart")
+        .get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
+  static Future<void> clearFirestoreCart() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+    final cartRef = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(user.uid)
+        .collection("Cart");
+    final batch = FirebaseFirestore.instance.batch();
+    final items = await cartRef.get();
+    for (var doc in items.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
   }
 }
