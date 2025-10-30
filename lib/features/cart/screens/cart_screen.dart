@@ -288,7 +288,7 @@ class _CartScreenState extends State<CartScreen> {
               }
 
               const deliveryFee = 30.0;
-              const discount = 0.0;
+              final discount = discountTotal;
               final total =
                   subtotal + deliveryFee; // subtotal already excludes discount
 

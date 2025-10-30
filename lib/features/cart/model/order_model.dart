@@ -44,7 +44,7 @@ class OrderModel {
       subTotal: (map["subTotal"] ?? 0).toDouble(),
       discount: (map["discount"] ?? 0).toDouble(),
       totalAmount: (map["totalAmount"] ?? 0).toDouble(),
-      orderStatus: map["orderStatus"] ?? "Pending",
+      orderStatus: map["orderStatus"] ?? "Making",
       createdAt: DateTime.tryParse(map["createdAt"] ?? "") ?? DateTime.now(),
       foodItems: List<Map<String, dynamic>>.from(map["foodItems"] ?? []),
     );

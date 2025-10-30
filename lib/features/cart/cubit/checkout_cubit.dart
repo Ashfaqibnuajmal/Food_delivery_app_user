@@ -29,7 +29,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         subTotal: subtotal,
         discount: discount,
         totalAmount: total,
-        orderStatus: 'Pending',
+        orderStatus: 'Making',
         createdAt: DateTime.now(),
       );
 
