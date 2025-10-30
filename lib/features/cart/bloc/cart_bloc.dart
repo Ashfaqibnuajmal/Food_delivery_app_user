@@ -64,11 +64,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     await _saveToCart(updatedCartItems); // save updated cart
   }
 
-  // ✅ NEW: Clear all cart items
   Future<void> _onClearCart(ClearCart event, Emitter<CartState> emit) async {
-    emit(state.copyWith(cartItems: [])); // Clear all items
+    emit(state.copyWith(cartItems: []));
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cart'); // Remove from local storage
+    await prefs.remove('cart');
+    await prefs.remove('coolDrinkBottomSheetShown'); // reset flag here too
   }
 
   Future<void> _saveToCart(List<Map<String, dynamic>> cartItems) async {

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
+import 'package:mera_app/features/cart/bloc/cart_bloc.dart';
+import 'package:mera_app/features/cart/bloc/cart_event.dart';
 import 'package:mera_app/features/cart/cubit/checkout_cubit.dart';
 import 'package:mera_app/features/cart/screens/address_screen.dart';
 import 'package:mera_app/features/profile/screens/order/order_history.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final double subtotal;
@@ -30,12 +33,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CheckoutCubit, CheckoutState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is CheckoutSuccess) {
+          // 🧹 Clear cart
+          context.read<CartBloc>().add(ClearCart());
+
+          // 🔁 Reset the Cool Drink bottom sheet flag
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.remove('coolDrinkBottomSheetShown');
+
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("✅ Order Placed Successfully")),
           );
+
           Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(builder: (_) => const OrderHistory()),
           );
