@@ -4,31 +4,10 @@ import 'package:mera_app/core/theme/app_color.dart';
 import 'package:mera_app/core/widgets/loading.dart';
 import 'package:intl/intl.dart';
 import 'package:mera_app/features/profile/screens/chat/chat_and_support.dart';
+import 'package:mera_app/features/profile/services/order_serivices.dart';
 
 class OrderHistory extends StatelessWidget {
   const OrderHistory({super.key});
-
-  // ✅ Safe conversion helper
-  Timestamp? safeToTimestamp(dynamic value) {
-    if (value == null) return null;
-    if (value is Timestamp) return value;
-    if (value is String) {
-      final parsed = DateTime.tryParse(value);
-      if (parsed != null) return Timestamp.fromDate(parsed);
-    }
-    if (value is int) {
-      try {
-        return Timestamp.fromMillisecondsSinceEpoch(value);
-      } catch (_) {}
-    }
-    return null;
-  }
-
-  // ✅ Date formatting helper
-  String formatDate(Timestamp? ts) {
-    if (ts == null) return "--";
-    return DateFormat('MMM d, yyyy - hh:mm a').format(ts.toDate());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +41,7 @@ class OrderHistory extends StatelessWidget {
                 child: Icon(
                   step["icon"] as IconData,
                   size: 16,
-                  color: isActive ? AppColors.primaryOrange : Colors.black,
+                  color: Colors.black,
                 ),
               ),
               if (!isLast)
@@ -120,10 +99,7 @@ class OrderHistory extends StatelessWidget {
               tabs: [Tab(text: 'Ongoing'), Tab(text: 'Completed')],
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Orders")
-                  .orderBy('createdAt', descending: true)
-                  .snapshots(),
+              stream: OrderServices.getAllOrdersStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: LoadingIndicator());
@@ -163,18 +139,14 @@ class OrderHistory extends StatelessWidget {
 
                 // ✅ Handle timestamps safely
                 final createdRaw = data['createdAt'];
-                final createdTs = safeToTimestamp(createdRaw);
-                final createdText = formatDate(createdTs);
+
+                final createdTs = OrderServices.safeToTimestamp(createdRaw);
+                final createdText = OrderServices.formatDate(createdTs);
+                Text(OrderServices.formatOrderId(orderId));
 
                 final rawMap = data['statusTimestamps'];
                 final Map<String, dynamic> statusMap =
                     (rawMap is Map) ? Map<String, dynamic>.from(rawMap) : {};
-
-                String statusTime(String key) {
-                  final raw = statusMap[key];
-                  final ts = safeToTimestamp(raw);
-                  return formatDate(ts);
-                }
 
                 // ✅ Generate simulated times (+5 min each)
                 List<String> simulatedTimes = [];
@@ -183,9 +155,10 @@ class OrderHistory extends StatelessWidget {
                   for (int i = 0; i < steps.length; i++) {
                     // Check if timestamp exists, otherwise simulate
                     String title = steps[i]['title'] as String;
-                    Timestamp? ts = safeToTimestamp(statusMap[title]);
+                    Timestamp? ts =
+                        OrderServices.safeToTimestamp(statusMap[title]);
                     if (ts != null) {
-                      simulatedTimes.add(formatDate(ts));
+                      simulatedTimes.add(OrderServices.formatDate(ts));
                       baseTime = ts.toDate(); // reset base for next step
                     } else {
                       // Add 5 minutes more than previous
@@ -208,12 +181,12 @@ class OrderHistory extends StatelessWidget {
                             const Text("Order ID",
                                 style: TextStyle(color: Colors.grey)),
                             const SizedBox(height: 2),
-                            Text(
-                              "#$orderId",
-                              style: const TextStyle(
+                            Text(OrderServices.formatOrderId(orderId),
+                                style: const TextStyle(
                                   color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                            ),
+                                  fontWeight: FontWeight.w500,
+                                )),
+
                             const SizedBox(height: 20),
                             Text(
                               currentStatus,
