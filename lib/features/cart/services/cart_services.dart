@@ -30,40 +30,6 @@ class CartServices {
     );
   }
 
-  /// ✅ Add single item to cart
-  static void addSingleToCart(BuildContext context, Map<String, dynamic> item) {
-    final cartBloc = context.read<CartBloc>();
-    cartBloc.add(AddToCart(item));
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Item added to cart",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppColors.primaryOrange,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  /// ✅ Remove item from cart
-  static void removeFromCart(BuildContext context, String id) {
-    final cartBloc = context.read<CartBloc>();
-    cartBloc.add(RemoveCartItems(id));
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Item removed from cart",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
   /// ✅ Clear all items from cart
   static void clearCart(BuildContext context) {
     final cartBloc = context.read<CartBloc>();

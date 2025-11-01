@@ -107,8 +107,10 @@ class OrderHistory extends StatelessWidget {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Center(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const SizedBox(height: 180),
                         Image.asset(
                           "assets/OrderEmpty.png",
                           height: 150,
